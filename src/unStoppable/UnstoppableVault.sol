@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import "solmate/src/utils/FixedPointMathLib.sol";
 import "solmate/src/utils/ReentrancyGuard.sol";
+
 import {SafeTransferLib, ERC4626, ERC20} from "solmate/src/mixins/ERC4626.sol";
 import "solmate/src/auth/Owned.sol";
 import {IERC3156FlashBorrower, IERC3156FlashLender} from "openzeppelin/interfaces/IERC3156.sol";
-import "openzeppelin/contracts/token/ERC721/ERC721.sol"
+import "openzeppelin/token/ERC721/ERC721.sol";
 
 /**
  * @title UnstoppableVault
