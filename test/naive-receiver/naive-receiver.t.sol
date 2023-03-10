@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import {NaiveReceiverLenderPool} from "../../src/naive-receiver/NaiveReceiverLenderPool.sol";
 import {FlashLoanReceiver} from "../../src/naive-receiver/FlashLoanReceiver.sol";
 import "openzeppelin/interfaces/IERC3156FlashBorrower.sol";
+import "forge-std/console.sol";
 
 interface INaiveReceiverLenderPool {
     function flashLoan(
@@ -45,6 +46,8 @@ contract UnstoppableTest is Test {
     address player;
     address ETH;
 
+    using stdStorage for StdStorage;
+
     function setUp() public {
         owner = makeAddr("owner");
         player = makeAddr("player");
@@ -65,6 +68,8 @@ contract UnstoppableTest is Test {
 
         assertEq(address(pool).balance, 1000 ether);
         assertEq(address(receiver).balance, 10 ether);
+
+        stdstore.target(address(pool)).sig("ETH()").find();
     }
 
     function testNaiveReceiverExploit() public {
